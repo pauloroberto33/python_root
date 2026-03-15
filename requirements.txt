@@ -1,0 +1,3 @@
+CoolProp
+IPython
+PySide6
