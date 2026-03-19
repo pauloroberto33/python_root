@@ -1,3 +1,4 @@
-CoolProp
-IPython
-PySide6
+numpy
+fastapi
+pydantic
+uvicorn
