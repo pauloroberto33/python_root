@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Dimensionamento de Acoplamento</title>
+</head>
+<body class="bg-gray-900 text-white p-10">
+    <div class="max-w-2xl mx-auto bg-gray-800 p-8 rounded-2xl shadow-2xl border border-gray-700">
+        <h1 class="text-3xl font-mono mb-2 text-cyan-400"># Coupling_Interference_Calculator</h1>
+        <p class="text-gray-400 text-sm mb-6">Dimensionamento de Interferência de Acoplamento em Turbinas</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Geometria -->
+            <div class="md:col-span-2">
+                <h2 class="text-sm font-bold text-cyan-400 uppercase mb-3">⚙️ Geometria do Acoplamento</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs uppercase text-gray-400">Diâmetro Eixo (mm)</label>
+                        <input type="number" id="d_eixo" class="w-full bg-gray-700 border-none rounded p-2 mt-1" value="60">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase text-gray-400">Diâmetro Externo Cubo (mm)</label>
+                        <input type="number" id="d_externo" class="w-full bg-gray-700 border-none rounded p-2 mt-1" value="150">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase text-gray-400">Comprimento Contato (mm)</label>
+                        <input type="number" id="comprimento" class="w-full bg-gray-700 border-none rounded p-2 mt-1" value="80">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Operação -->
+            <div class="md:col-span-2">
+                <h2 class="text-sm font-bold text-cyan-400 uppercase mb-3">🔧 Condições de Operação</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs uppercase text-gray-400">Potência (kW)</label>
+                        <input type="number" id="potencia" class="w-full bg-gray-700 border-none rounded p-2 mt-1" value="500">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase text-gray-400">Rotação (RPM)</label>
+                        <input type="number" id="rpm" class="w-full bg-gray-700 border-none rounded p-2 mt-1" value="3600">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parâmetros -->
+            <div class="md:col-span-2">
+                <h2 class="text-sm font-bold text-cyan-400 uppercase mb-3">📊 Parâmetros de Projeto</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs uppercase text-gray-400">Fator de Segurança</label>
+                        <input type="range" id="fs" min="1.0" max="2.0" step="0.1" value="1.2" class="w-full h-2 bg-gray-600 rounded-lg">
+                        <span id="fs_val" class="text-cyan-400 text-sm">1.2</span>
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase text-gray-400">Coef. Atrito (μ)</label>
+                        <input type="range" id="mu" min="0.1" max="0.3" step="0.01" value="0.15" class="w-full h-2 bg-gray-600 rounded-lg">
+                        <span id="mu_val" class="text-cyan-400 text-sm">0.15</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="calcular()" class="w-full mt-8 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-lg transition">
+            CALCULAR INTERFERÊNCIA
+        </button>
+
+        <!-- Resultados -->
+        <div id="resultados" class="mt-8 hidden border-t border-gray-600 pt-6 space-y-4">
+            <h2 class="text-lg font-bold text-cyan-400 mb-4">📈 Resultados</h2>
+            
+            <div class="bg-gray-700 p-4 rounded-lg">
+                <p class="text-gray-400 text-xs uppercase">Torque Nominal (Nm)</p>
+                <p class="text-2xl font-bold text-green-400"><span id="torque">0</span></p>
+            </div>
+
+            <div class="bg-gray-700 p-4 rounded-lg">
+                <p class="text-gray-400 text-xs uppercase">Pressão de Contato Requerida (MPa)</p>
+                <p class="text-2xl font-bold text-green-400"><span id="pressao">0</span></p>
+            </div>
+
+            <div class="bg-gray-700 p-4 rounded-lg">
+                <p class="text-gray-400 text-xs uppercase">Perda por Efeito Centrífugo (mm)</p>
+                <p class="text-2xl font-bold text-yellow-400"><span id="expansao">0</span></p>
+            </div>
+
+            <div class="bg-gray-900 border-2 border-green-500 p-4 rounded-lg">
+                <p class="text-gray-400 text-xs uppercase">⭐ INTERFERÊNCIA DIAMETRAL DE PROJETO (mm)</p>
+                <p class="text-4xl font-bold text-green-500"><span id="interferencia">0</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('fs').oninput = function() {
+            document.getElementById('fs_val').innerText = parseFloat(this.value).toFixed(1);
+        }
+        
+        document.getElementById('mu').oninput = function() {
+            document.getElementById('mu_val').innerText = parseFloat(this.value).toFixed(2);
+        }
+
+        async function calcular() {
+            const payload = {
+                d_eixo_mm: parseFloat(document.getElementById('d_eixo').value),
+                d_externo_cubo_mm: parseFloat(document.getElementById('d_externo').value),
+                potencia_kw: parseFloat(document.getElementById('potencia').value),
+                rpm: parseFloat(document.getElementById('rpm').value),
+                comprimento_cubo_mm: parseFloat(document.getElementById('comprimento').value),
+                fator_seguranca: parseFloat(document.getElementById('fs').value),
+                coef_atrito: parseFloat(document.getElementById('mu').value)
+            };
+
+            try {
+                const resp = await fetch('/api/calcular', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                const data = await resp.json();
+                
+                if (data.erro) {
+                    alert('Erro: ' + data.erro);
+                    return;
+                }
+                
+                document.getElementById('torque').innerText = data.torque_nm;
+                document.getElementById('pressao').innerText = data.pressao_min_mpa;
+                document.getElementById('expansao').innerText = data.expansao_centrifuga_mm;
+                document.getElementById('interferencia').innerText = data.interferencia_projeto_mm;
+                document.getElementById('resultados').classList.remove('hidden');
+            } catch (err) {
+                alert('Erro na comunicação: ' + err);
+            }
+        }
+    </script>
+        }
+    </script>
+</body>
+</html>
