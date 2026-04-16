@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-start gap-3 mb-4">
+    <div>
+        <h1>Despesas</h1>
+        <p class="text-muted">Registre despesas e acompanhe os custos operacionais do estúdio em tempo real.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="/pagamentos" class="btn btn-outline-secondary">Pagamentos</a>
+        <a href="/dashboard" class="btn btn-outline-secondary">Dashboard</a>
+    </div>
+</div>
+<div class="row g-4">
+    <div class="col-xl-8">
+        <div class="card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h5 class="mb-1">Histórico de despesas</h5>
+                    <p class="text-muted mb-0">Tenha visibilidade clara de onde o estúdio está investindo.</p>
+                </div>
+                <span class="badge bg-danger-soft text-danger">{{ despesas|length }} registros</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Descrição</th>
+                            <th>Categoria</th>
+                            <th>Data</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for despesa in despesas %}
+                        <tr>
+                            <td>{{ despesa.descricao }}</td>
+                            <td>{{ despesa.categoria or 'Outros' }}</td>
+                            <td>{{ despesa.data_despesa }}</td>
+                            <td>R$ {{ '{:,.2f}'.format(despesa.valor) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="card p-4">
+            <h5 class="mb-3">Nova despesa</h5>
+            <form action="/despesas/novo" method="post" class="row g-3">
+                <div class="col-12">
+                    <label class="form-label">Descrição</label>
+                    <input class="form-control" name="descricao" required>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Valor (R$)</label>
+                    <input class="form-control" type="number" step="0.01" name="valor" required>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Data da despesa</label>
+                    <input class="form-control" type="date" name="data_despesa">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Categoria</label>
+                    <input class="form-control" name="categoria" placeholder="Aluguel, Salários, Material, Marketing">
+                </div>
+                <div class="col-12 mt-2">
+                    <button class="btn btn-primary w-100">Salvar Despesa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

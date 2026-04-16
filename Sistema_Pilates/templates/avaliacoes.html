@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-start gap-3 mb-4">
+    <div>
+        <h1>Avaliações</h1>
+        <p class="text-muted">Registre avaliações completas para cada cliente e acompanhe planos de aula recomendados.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="/clientes" class="btn btn-outline-secondary">Clientes</a>
+        <a href="/dashboard" class="btn btn-outline-secondary">Dashboard</a>
+    </div>
+</div>
+<div class="row g-4">
+    <div class="col-xl-8">
+        <div class="card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h5 class="mb-1">Histórico de avaliações</h5>
+                    <p class="text-muted mb-0">Acompanhe cada avaliação registrada em ordem cronológica.</p>
+                </div>
+                <span class="badge bg-primary-soft text-primary">{{ avaliacoes|length }} registros</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Cliente</th>
+                            <th>Postura</th>
+                            <th>Objetivos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for aval in avaliacoes %}
+                        <tr>
+                            <td>{{ aval.data_avaliacao }}</td>
+                            <td>{{ aval.cliente }}</td>
+                            <td>{{ aval.postura_observacoes or 'Sem comentário' }}</td>
+                            <td>{{ aval.objetivos or 'Sem objetivos' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="card p-4">
+            <h5 class="mb-3">Nova avaliação</h5>
+            <form action="/avaliacoes/novo" method="post" class="row g-3">
+                <div class="col-12">
+                    <label class="form-label">Cliente</label>
+                    <select class="form-select" name="cliente_id" required>
+                        <option value="">Selecione um cliente</option>
+                        {% for cliente in clientes %}
+                        <option value="{{ cliente.id }}">{{ cliente.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Data da avaliação</label>
+                    <input class="form-control" type="date" name="data_avaliacao">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Observações de postura</label>
+                    <textarea class="form-control" name="postura_observacoes" rows="2"></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Força e flexibilidade</label>
+                    <textarea class="form-control" name="forca_flexibilidade" rows="2"></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Objetivos</label>
+                    <textarea class="form-control" name="objetivos" rows="2"></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Plano sugerido</label>
+                    <textarea class="form-control" name="plano_aula_sugerido" rows="2"></textarea>
+                </div>
+                <div class="col-12 mt-2">
+                    <button class="btn btn-primary w-100">Registrar Avaliação</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

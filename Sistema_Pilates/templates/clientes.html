@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-start gap-3 mb-4">
+    <div>
+        <h1>Clientes</h1>
+        <p class="text-muted">Gerencie o cadastro e o histórico dos clientes do Pilates Studio com facilidade.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="/dashboard" class="btn btn-outline-secondary">Dashboard</a>
+        <a href="/avaliacoes" class="btn btn-outline-secondary">Avaliações</a>
+    </div>
+</div>
+<div class="row g-4">
+    <div class="col-xl-8">
+        <div class="card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h5 class="mb-1">Lista de clientes</h5>
+                    <p class="text-muted mb-0">Visualize o cadastro e detalhes de contato rapidamente.</p>
+                </div>
+                <span class="badge bg-success-soft text-success">{{ clientes|length }} clientes</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Telefone</th>
+                            <th>E-mail</th>
+                            <th>Cadastro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cliente in clientes %}
+                        <tr>
+                            <td>{{ cliente.id }}</td>
+                            <td>{{ cliente.nome }}</td>
+                            <td>{{ cliente.telefone or 'N/A' }}</td>
+                            <td>{{ cliente.email or 'N/A' }}</td>
+                            <td>{{ cliente.data_cadastro }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="card p-4">
+            <h5 class="mb-3">Novo Cliente</h5>
+            <form action="/clientes/novo" method="post" class="row g-3">
+                <div class="col-12">
+                    <label class="form-label">Nome completo</label>
+                    <input class="form-control" name="nome" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Data de nascimento</label>
+                    <input class="form-control" type="date" name="data_nascimento">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">CPF</label>
+                    <input class="form-control" name="cpf">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Telefone</label>
+                    <input class="form-control" name="telefone">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">E-mail</label>
+                    <input class="form-control" name="email" type="email">
+                </div>
+                <div class="col-12 mt-2">
+                    <button class="btn btn-primary w-100">Salvar Cliente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

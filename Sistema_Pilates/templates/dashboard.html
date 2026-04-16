@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-start gap-3 mb-4">
+    <div>
+        <h1>Dashboard Pilates</h1>
+        <p class="text-muted">Painel moderno para ver o desempenho financeiro e a saúde do estúdio em um único lugar.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap page-actions">
+        <a href="/clientes" class="btn btn-outline-secondary">Clientes</a>
+        <a href="/pagamentos" class="btn btn-outline-secondary">Pagamentos</a>
+        <a href="/despesas" class="btn btn-outline-secondary">Despesas</a>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <small>Meses analisados</small>
+            <div class="stat-value">{{ months | length }}</div>
+            <span class="badge bg-primary-soft text-primary">Tendência positiva</span>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <small>Receita média</small>
+            <div class="stat-value">R$ {{ '{:,.2f}'.format((receita | sum) / (months | length) if months | length > 0 else 0) }}</div>
+            <span class="badge bg-success-soft text-success">Receita consistente</span>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <small>Despesa média</small>
+            <div class="stat-value">R$ {{ '{:,.2f}'.format((despesa | sum) / (months | length) if months | length > 0 else 0) }}</div>
+            <span class="badge bg-danger-soft text-danger">Custos controlados</span>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card kpi-card">
+            <small>Saldo médio</small>
+            <div class="stat-value">R$ {{ '{:,.2f}'.format(((receita | sum) - (despesa | sum)) / (months | length) if months | length > 0 else 0) }}</div>
+            <span class="badge bg-primary-soft text-primary">Performance saudável</span>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-xl-8">
+        <div class="card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-4 gap-3">
+                <div>
+                    <h2 class="mb-1">Receitas x Despesas</h2>
+                    <p class="text-muted mb-0">Evolução mensal com saldo projetado para o próximo período.</p>
+                </div>
+                <span class="badge bg-info-soft text-info">Atualizado automaticamente</span>
+            </div>
+            <div class="chart-wrapper" style="min-height: 360px;">
+                <canvas id="dashboardChart" height="220"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="feature-card h-100">
+            <div class="p-4">
+                <h5 class="mb-3">Insights rápidos</h5>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="stat-card p-3">
+                            <p class="mb-1">Receita total</p>
+                            <strong>R$ {{ '{:,.2f}'.format(receita | sum) }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="stat-card p-3">
+                            <p class="mb-1">Despesa total</p>
+                            <strong>R$ {{ '{:,.2f}'.format(despesa | sum) }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="stat-card p-3">
+                            <p class="mb-1">Saldo total</p>
+                            <strong>R$ {{ '{:,.2f}'.format((receita | sum) - (despesa | sum)) }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="feature-card p-4 h-100">
+            <h5>Decisões focadas</h5>
+            <p class="text-muted mb-0">Use os dados do painel para priorizar clientes, ajustar preços e planejar campanhas.</p>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="feature-card p-4 h-100">
+            <h5>Operações alinhadas</h5>
+            <p class="text-muted mb-0">Mantenha o estúdio sustentável com uma visão clara de receitas, despesas e crescimento.</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('dashboardChart');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: {{ months | tojson }},
+        datasets: [
+            {
+                label: 'Receita',
+                data: {{ receita | tojson }},
+                borderColor: '#16a34a',
+                backgroundColor: 'rgba(22, 163, 74, 0.18)',
+                tension: 0.35,
+                fill: true,
+                pointRadius: 4,
+                pointBackgroundColor: '#16a34a'
+            },
+            {
+                label: 'Despesa',
+                data: {{ despesa | tojson }},
+                borderColor: '#dc2626',
+                backgroundColor: 'rgba(220, 38, 38, 0.18)',
+                tension: 0.35,
+                fill: true,
+                pointRadius: 4,
+                pointBackgroundColor: '#dc2626'
+            },
+            {
+                label: 'Saldo',
+                data: {{ saldo | tojson }},
+                borderColor: '#2563eb',
+                backgroundColor: 'rgba(37, 99, 235, 0.18)',
+                tension: 0.35,
+                fill: true,
+                pointRadius: 4,
+                pointBackgroundColor: '#2563eb'
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'top', labels: { boxWidth: 12, padding: 16 } },
+            tooltip: { mode: 'index', intersect: false }
+        },
+        interaction: { mode: 'index', intersect: false },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: { color: 'rgba(15, 23, 42, 0.08)' },
+                ticks: { callback: value => 'R$ ' + value.toLocaleString('pt-BR') }
+            },
+            x: {
+                grid: { display: false }
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

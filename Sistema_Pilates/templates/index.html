@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="main-hero mb-5">
+    <div class="row align-items-center gx-5">
+        <div class="col-lg-7">
+            <span class="badge rounded-pill bg-success-soft text-success mb-3">Web App Profissional</span>
+            <h1 class="section-title mb-3">Gestão de Pilates com design moderno e foco em resultados</h1>
+            <p class="section-subtitle mb-4">Uma plataforma clara para controlar clientes, avaliações, planos de pagamento, despesas e performance financeira.</p>
+            <div class="d-flex hero-actions gap-3 flex-wrap">
+                <a href="/clientes" class="btn btn-primary btn-lg">Acessar Clientes</a>
+                <a href="/dashboard" class="btn btn-outline-secondary btn-lg">Ver Dashboard</a>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="info-card p-4 text-center">
+                <h4 class="mb-3">Resumo atual</h4>
+                <div class="row g-3 text-start">
+                    <div class="col-12"><strong>Clientes</strong><p class="mb-0 text-muted">{{ total_clientes }}</p></div>
+                    <div class="col-12"><strong>Avaliações</strong><p class="mb-0 text-muted">{{ total_avaliacoes }}</p></div>
+                    <div class="col-12"><strong>Pagamentos</strong><p class="mb-0 text-muted">{{ total_pagamentos }}</p></div>
+                    <div class="col-12"><strong>Despesas</strong><p class="mb-0 text-muted">{{ total_despesas }}</p></div>
+                </div>
+                <div class="divider my-3"></div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted mb-1">Receita</p>
+                        <h3 class="text-success mb-0">R$ {{ '{:,.2f}'.format(receita) }}</h3>
+                    </div>
+                    <div>
+                        <p class="text-muted mb-1">Saldo</p>
+                        <h3 class="text-primary mb-0">R$ {{ '{:,.2f}'.format(saldo) }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row section-grid mb-5">
+    <div class="col-md-4">
+        <div class="feature-card p-4 h-100">
+            <h5>Gestão de Clientes</h5>
+            <p class="text-muted mb-0">Organize contatos, histórico de cadastro e informações de cada cliente com facilidade.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="feature-card p-4 h-100">
+            <h5>Avaliações inteligentes</h5>
+            <p class="text-muted mb-0">Registre postura, força, flexibilidade e planos de aula com visual limpo e rápido.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="feature-card p-4 h-100">
+            <h5>Finanças transparentes</h5>
+            <p class="text-muted mb-0">Controle pagamentos e despesas com relatórios práticos para acompanhar o desempenho.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row section-grid">
+    <div class="col-md-4">
+        <div class="summary-card p-4 h-100">
+            <h6 class="mb-3">Receita total</h6>
+            <p class="display-6 text-success mb-0">R$ {{ '{:,.2f}'.format(receita) }}</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="summary-card p-4 h-100">
+            <h6 class="mb-3">Despesa total</h6>
+            <p class="display-6 text-danger mb-0">R$ {{ '{:,.2f}'.format(despesas) }}</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="summary-card p-4 h-100">
+            <h6 class="mb-3">Margem líquida</h6>
+            <p class="display-6 text-primary mb-0">R$ {{ '{:,.2f}'.format(saldo) }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
